@@ -928,10 +928,6 @@
         const lockedContent = document.getElementById("lockedContent");
         const midnightBurst = document.getElementById("midnightBurst");
         const isPreviewMode = new URLSearchParams(window.location.search).get("preview") === "1";
-        const isPartyTestMode = new URLSearchParams(window.location.search).get("party") === "1";
-
-        const birthdayMonth = 3;
-        const birthdayDay = 27;
         let pageUnlocked = false;
         let burstPlayed = false;
 
@@ -946,18 +942,6 @@
                 heart.style.fontSize = `${18 + Math.random() * 22}px`;
                 floatingHearts.appendChild(heart);
             }
-        }
-
-        function getNextBirthday() {
-            const now = new Date();
-            let year = now.getFullYear();
-            const target = new Date(year, birthdayMonth - 1, birthdayDay, 0, 0, 0);
-
-            if (now > target) {
-                return new Date(year + 1, birthdayMonth - 1, birthdayDay, 0, 0, 0);
-            }
-
-            return target;
         }
 
         function fireMidnightBurst() {
@@ -1034,44 +1018,15 @@
         }
 
         function updateCountdown() {
-            if (isPreviewMode) {
-                countdownLabel.textContent = "Preview mode is on. The surprise is visible only for testing.";
-                unlockPage();
-                if (isPartyTestMode) {
-                    fireMidnightBurst();
-                }
-                document.getElementById("days").textContent = "00";
-                document.getElementById("hours").textContent = "00";
-                document.getElementById("minutes").textContent = "00";
-                document.getElementById("seconds").textContent = "00";
-                return;
-            }
-
-            const now = new Date();
-            const nextBirthday = getNextBirthday();
-            const diff = nextBirthday - now;
-
-            if (diff <= 0) {
-                countdownLabel.textContent = "It is your day. Happy Birthday.";
-                unlockPage();
-                fireMidnightBurst();
-                document.getElementById("days").textContent = "00";
-                document.getElementById("hours").textContent = "00";
-                document.getElementById("minutes").textContent = "00";
-                document.getElementById("seconds").textContent = "00";
-                return;
-            }
-
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-            const minutes = Math.floor((diff / (1000 * 60)) % 60);
-            const seconds = Math.floor((diff / 1000) % 60);
-
-            document.getElementById("days").textContent = String(days).padStart(2, "0");
-            document.getElementById("hours").textContent = String(hours).padStart(2, "0");
-            document.getElementById("minutes").textContent = String(minutes).padStart(2, "0");
-            document.getElementById("seconds").textContent = String(seconds).padStart(2, "0");
-            countdownLabel.textContent = `Counting down to ${nextBirthday.toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" })}.`;
+            countdownLabel.textContent = isPreviewMode
+                ? "Preview mode is on. Happy Birthday."
+                : "It is your day. Happy Birthday.";
+            document.getElementById("days").textContent = "00";
+            document.getElementById("hours").textContent = "00";
+            document.getElementById("minutes").textContent = "00";
+            document.getElementById("seconds").textContent = "00";
+            unlockPage();
+            fireMidnightBurst();
         }
 
         musicToggle.addEventListener("click", async () => {
@@ -1103,7 +1058,6 @@
 
         createHearts();
         updateCountdown();
-        setInterval(updateCountdown, 1000);
     </script>
 </body>
 </html>
